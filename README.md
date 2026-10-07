@@ -47,6 +47,9 @@ stimuli of a form never share a fragment.
 - **Download sounds**, on a set, saves its four WAV files as `setNN.zip`. Each set keeps
   the settings it was generated with, so its sounds are identical every time, even after
   the defaults change.
+- **Date, hour and coordinates** of the session are noted once per set, above its
+  playbacks. "Now" fills in the current date and hour, "Use my position" the coordinates
+  of the device, and pasting `latitude, longitude` into either box fills both.
 - **Each row is one playback**, in playing order, with a button to hear the stimulus and
   a small chart of one fragment (notes coloured by type). Clicking its name opens it in
   the lab above.
@@ -63,8 +66,9 @@ Everything is stored in the browser of the computer you use: not online, and not
 with anyone.
 
 - **Download data** saves `playback_data_<date>.csv`, one row per playback for every
-  set: set, order, file name, treatment, form, time spent within 1 m (as m:ss and in
-  seconds), the three counts and the comments, followed by how the stimulus was made.
+  set: set, order, file name, treatment, form, the date, hour and coordinates of its
+  set, time spent within 1 m (as m:ss and in seconds), the three counts and the
+  comments, followed by how the stimulus was made.
   The page tells you whether anything changed since the last download.
 - **Import data** reads such a file back, on any computer. Sets that are already there
   get the notes of the file; other sets are added, under a new number if theirs is
