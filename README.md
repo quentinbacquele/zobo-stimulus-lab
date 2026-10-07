@@ -1,16 +1,19 @@
 # Zobo stimulus lab
 
-Browser tools for building synthetic playback songs of the Réunion grey white-eye
+A browser tool for building synthetic playback songs of the Réunion grey white-eye
 (*Zosterops borbonicus*), for the HIGH and LBHB forms.
 
-- **[Stimulus sets](https://quentinbacquele.github.io/zobo-stimulus-lab/sets.html)**:
-  one click draws a ready-to-use set of four stimuli for the playback experiment, which
-  you then download as a zip from the list.
-- **[Stimulus lab](https://quentinbacquele.github.io/zobo-stimulus-lab/)**: explore any
-  fragment and treatment, listen, and export single stimuli.
+**Open it: <https://quentinbacquele.github.io/zobo-stimulus-lab/>**
+
+The page has two parts:
+
+- **Stimulus lab** (top): explore any fragment and treatment, listen, and export single
+  stimuli.
+- **Stimulus sets** (bottom): one click draws a ready-to-use set of four stimuli for the
+  playback experiment, which you then download as a zip.
 
 Everything runs in your browser and nothing is uploaded. To work offline, download
-`index.html` and `sets.html` into the same folder and open them.
+`index.html` and open it.
 
 ## A set
 
@@ -31,11 +34,14 @@ within its form, and the two stimuli of a form never share a fragment.
 - `setNN.zip` unpacks to a folder `setNN` with the four WAV files and `setNN.json`, which
   records the fragments, the settings and the random seed.
 
-Generating a set only adds it to a list on the page; nothing is downloaded until you
-press Download on its row. The list shows what each set contains, and any set can be
-deleted from it. Each set keeps the settings it was generated with, so downloading it again
-gives the identical files even after the defaults change, and a deleted set's number is
-not reused. The list can be exported as a CSV file. It is stored in the browser of the
+Generating a set only adds it to the list on the page; nothing is downloaded until you
+press Download on that set. Each set shows a small chart of its four stimuli (one
+fragment each, notes coloured by type, over the recorded fragment in grey), and clicking
+a stimulus opens it in the lab above. Any set can be deleted from the list.
+
+Each set keeps the settings it was generated with, so downloading it again gives the
+identical files even after the defaults change, and a deleted set's number is not
+reused. The list can be exported as a CSV file. It is stored in the browser of the
 computer you use, not shared.
 
 ## Treatments
@@ -64,7 +70,8 @@ data.
 ## Staying up to date
 
 An open or cached page checks `version.txt` when it loads and moves to the latest
-published version by itself, so everyone works with the same settings.
+published version by itself, so everyone works with the same settings. `sets.html` only
+forwards old links to the sets part of the page.
 
 ## Status
 
