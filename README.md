@@ -17,33 +17,43 @@ Everything runs in your browser and nothing is uploaded. To work offline, downlo
 
 ## A set
 
-Each set holds four stimuli. Every one is built on a song fragment drawn at random
-within its form, and the two stimuli of a form never share a fragment.
+Each set holds four stimuli, in a random order: the order in which to play them. Every
+stimulus is built on a song fragment drawn at random within its form, and the two
+stimuli of a form never share a fragment.
 
-| File in the zip | Fragment | Treatment |
+| Stimulus | Fragment | Treatment |
 |---|---|---|
-| `original_LBHB_<fragment>.wav` | LBHB | Original |
-| `original_HIGH_<fragment>.wav` | HIGH | Original |
-| `maximized_HIGH_<fragment>.wav` | HIGH | Maximized, bias 2.5 |
-| `attenuated_LBHB_<fragment>.wav` | LBHB | Attenuated, smooth and scale, 0% modulation kept |
+| Original LBHB | LBHB | Original |
+| Original HIGH | HIGH | Original |
+| Maximized HIGH | HIGH | Maximized, bias 2.5 |
+| Attenuated LBHB | LBHB | Attenuated, smooth and scale, 0% modulation kept |
 
 - Only fragments of at least 15 notes are used (46 HIGH, 19 LBHB).
 - The fragment is repeated whole until the stimulus lasts at least 60 s, so files run
   from about 60 to 68 s. Notes are 65 ms apart and repetitions 130 ms apart.
 - Files are mono, 44.1 kHz, 16-bit, with the sounding parts at -20 dBFS RMS.
 - `setNN.zip` unpacks to a folder `setNN` with the four WAV files and `setNN.json`, which
-  records the fragments, the settings and the random seed.
+  records the fragments, the order, the settings and the random seed. Files are named
+  `<place>_<treatment>_<FORM>_<fragment>.wav`, for example
+  `2_maximized_HIGH_ZB_0025_211109_015.WAV_24.wav`, so they sort in playing order.
 
 Generating a set only adds it to the list on the page; nothing is downloaded until you
-press Download on that set. Each set shows a small chart of its four stimuli (one
-fragment each, notes coloured by type) with a button to play it, and clicking a
-stimulus's name opens it in the lab above. Any set can be deleted from the list.
+press Download on that set. Each set lists its four stimuli one per row, in order, with
+a button to play each one and a small chart of one fragment (notes coloured by type).
+Clicking a stimulus's name opens it in the lab above. Any set can be deleted.
+
+Next to each stimulus are the fields to fill in after playback: time spent within 1 m
+(minutes and seconds), the largest number of birds seen within 1 m, 2 m and 5 m, and
+comments. They are saved as you type. "Export table" writes one line per stimulus with
+what was played and what was noted.
 
 Each set keeps the settings it was generated with, so downloading it again gives the
 identical files even after the defaults change. A new set takes the lowest free number,
 so the numbers of deleted sets are used again; the creation time and seed in
-`setNN.json` tell two sets with the same number apart. The list can be exported as a CSV file. It is stored in the browser of the
-computer you use, not shared.
+`setNN.json` tell two sets with the same number apart.
+
+**The list and everything typed into it are stored in the browser of the computer you
+use, not online and not shared.** Export the table regularly to keep a copy.
 
 ## Treatments
 
@@ -53,12 +63,12 @@ computer you use, not shared.
   by how many times more the form uses it than the other form. The least specific notes
   are replaced first, by notes of the same form borrowed from other fragments, and at
   high bias almost everything becomes the form's most specific type.
-- **Attenuated**: the fine structure of the fragment is reduced, in one of three ways.
-  *Smooth + scale* smooths each note's contour and shrinks its frequency modulation
-  (down to a flat tone at 0%). *PCs* rebuilds each note from its first principal
-  components. *Whistle* keeps the notes as recorded but replaces every silence between
-  two notes by a straight pitch glide, so each fragment becomes one continuous whistle.
-  With any of them, every note can also be moved to the fragment's average pitch.
+- **Attenuated**: the fine structure of the fragment is reduced. *Smooth + scale* smooths
+  each note's contour and shrinks its frequency modulation (down to a flat tone at 0%);
+  *PC reconstruction* rebuilds each note from its first principal components. Two boxes
+  can be ticked on top: *Same pitch for all notes* moves every note to the fragment's
+  average pitch, and *Fill silences (whistle)* replaces each silence between two notes
+  by a straight pitch glide, so the fragment becomes one continuous whistle.
 
 ## Data
 
