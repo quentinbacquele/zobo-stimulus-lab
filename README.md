@@ -38,9 +38,10 @@ stimuli of a form never share a fragment.
   `2_maximized_HIGH_ZB_0025_211109_015.WAV_24.wav`, so they sort in playing order.
 
 Generating a set only adds it to the list on the page; nothing is downloaded until you
-press Download on that set. Each set lists its four stimuli one per row, in order, with
-a button to play each one and a small chart of one fragment (notes coloured by type).
-Clicking a stimulus's name opens it in the lab above. Any set can be deleted.
+press Download on that set. One set is shown at a time; the arrows and the menu beside
+"Generated sets" move between them. A set lists its four stimuli one per row, in order,
+with a button to play each one and a small chart of one fragment (notes coloured by
+type). Clicking a stimulus's name opens it in the lab above. Any set can be deleted.
 
 Next to each stimulus are the fields to fill in after playback: time spent within 1 m
 (minutes and seconds), the largest number of birds seen within 1 m, 2 m and 5 m, and
