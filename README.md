@@ -25,15 +25,16 @@ within its form, and the two stimuli of a form never share a fragment.
 | `attenuated_LBHB_<fragment>.wav` | LBHB | Attenuated, smooth and scale, 0% modulation kept |
 
 - Only fragments of at least 15 notes are used (46 HIGH, 19 LBHB).
-- The fragment is repeated whole until the stimulus lasts at least 30 s, so files run
-  from about 30 to 37 s. Notes and repetitions are 65 ms apart.
+- The fragment is repeated whole until the stimulus lasts at least 60 s, so files run
+  from about 60 to 68 s. Notes are 65 ms apart and repetitions 130 ms apart.
 - Files are mono, 44.1 kHz, 16-bit, with the sounding parts at -20 dBFS RMS.
 - `setNN.zip` unpacks to a folder `setNN` with the four WAV files and `setNN.json`, which
   records the fragments, the settings and the random seed.
 
 The page lists every set generated in that browser, so you can see what each one
-contains and download it again; a set downloaded twice is identical. The list can be
-exported as a CSV file. It is stored on the computer you use, not shared.
+contains and download it again. Each set keeps the settings it was generated with, so
+downloading it again gives the identical files even after the defaults change. The list
+can be exported as a CSV file. It is stored on the computer you use, not shared.
 
 ## Treatments
 

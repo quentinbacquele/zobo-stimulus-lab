@@ -133,7 +133,7 @@ const Lab = (() => {
   const MIN_NOTES = 15;           // shorter song fragments are not used
   // Settings of the playback experiment. Both pages start from them.
   const EXPERIMENT = { bias: 2.5, method: 'smooth', fm: 0, sigma: 2, pcs: 5, flat: false,
-    gap: 65, pause: 65, target: 30, lead: 100, trail: 100, fade: 5, level: -20, sampleRate: SAMPLE_RATE };
+    gap: 65, pause: 130, target: 60, lead: 100, trail: 100, fade: 5, level: -20, sampleRate: SAMPLE_RATE };
   const EPS = 1e-6;
   const SMOOTHING = 0.005;        // added to both shares before taking their ratio
   const BIAS_LIMIT = 30;
@@ -629,6 +629,10 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     .filter((index) => D.songs[index].n >= Lab.MIN_NOTES && D.morphs[D.songs[index].morph] === form);
   const random = (below) => Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296 * below);
   const folder = (set) => `set${String(set.number).padStart(2, '0')}`;
+  // A set carries the settings it was generated with, so it can always be rebuilt as it was.
+  const snapshot = () => ({ ...E });
+  const EARLIER = { pause: 65, target: 30 };   // sets saved before settings were recorded
+  const settingsOf = (set) => set.settings || { ...E, ...EARLIER };
   const fileName = (item) => `${item.treatment}_${item.form}_${stem(item.fragment)}.wav`;
 
   // ---- The record, kept in this browser ---------------------------------------
@@ -649,7 +653,8 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
       taken.add(index);
       return { treatment, form, fragment: D.songs[index].name };
     });
-    return { number: Math.max(0, ...sets.map((set) => set.number)) + 1, created: new Date().toISOString(), seed: random(1e9), items };
+    return { number: Math.max(0, ...sets.map((set) => set.number)) + 1, created: new Date().toISOString(), seed: random(1e9),
+      settings: snapshot(), items };
   }
 
   // ---- Building the archive ---------------------------------------------------
@@ -657,7 +662,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   function render(item, set) {
     const song = D.songs.findIndex((entry) => entry.name === item.fragment);
     if (song < 0) throw new Error(`Fragment ${item.fragment} is not in this page's data.`);
-    return { song: D.songs[song], out: Lab.renderSong(D, { ...E, song, treatment: item.treatment, seed: set.seed }) };
+    return { song: D.songs[song], out: Lab.renderSong(D, { ...settingsOf(set), song, treatment: item.treatment, seed: set.seed }) };
   }
 
   const crcTable = Uint32Array.from({ length: 256 }, (_, n) => {
@@ -700,7 +705,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
 
   // The four WAV files and a manifest, in one folder named after the set.
   function build(set) {
-    const files = [], described = [];
+    const files = [], described = [], used = settingsOf(set);
     for (const item of set.items) {
       const { song, out } = render(item, set);
       files.push({ name: `${folder(set)}/${fileName(item)}`, bytes: new Uint8Array(Lab.encodeWav(out.audio, out.sampleRate)) });
@@ -709,15 +714,15 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
         file: fileName(item), treatment: item.treatment, form: item.form, song_fragment: item.fragment, bird: song.bird,
         n_notes: out.notes.length, n_fragments: out.repeats, duration_s: out.duration,
         note_types: out.sequence.map((type) => D.letters[type]),
-        ...(item.treatment === 'maximized' && { bias: E.bias, seed: set.seed, notes_replaced: out.replaced }),
+        ...(item.treatment === 'maximized' && { bias: used.bias, seed: set.seed, notes_replaced: out.replaced }),
         ...(item.treatment === 'attenuated' && {
-          method: 'smooth and scale', modulation_kept: E.fm, smoothing_sigma_frames: E.sigma, same_pitch_for_all_notes: E.flat }),
+          method: 'smooth and scale', modulation_kept: used.fm, smoothing_sigma_frames: used.sigma, same_pitch_for_all_notes: used.flat }),
       });
     }
     const manifest = {
       set: set.number, created: set.created, files: described,
-      settings: { minimum_fragment_notes: Lab.MIN_NOTES, note_gap_ms: E.gap, fragment_gap_ms: E.pause, target_duration_s: E.target,
-        lead_ms: E.lead, trail_ms: E.trail, fade_ms: E.fade, active_rms_dbfs: E.level, sample_rate_hz: E.sampleRate },
+      settings: { minimum_fragment_notes: Lab.MIN_NOTES, note_gap_ms: used.gap, fragment_gap_ms: used.pause, target_duration_s: used.target,
+        lead_ms: used.lead, trail_ms: used.trail, fade_ms: used.fade, active_rms_dbfs: used.level, sample_rate_hz: used.sampleRate },
       data: D.meta,
     };
     files.push({ name: `${folder(set)}/${folder(set)}.json`, bytes: new TextEncoder().encode(JSON.stringify(manifest, null, 2) + '\n') });
@@ -741,12 +746,13 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   }
   $('common').textContent = `Each stimulus is a random fragment of ${Lab.MIN_NOTES} notes or more `
     + `(${RECIPE.map((item) => item.form).filter((form, k, all) => all.indexOf(form) === k).map((form) => `${pool(form).length} ${form}`).join(', ')}), `
-    + `repeated to at least ${E.target} s with ${E.gap} ms gaps.`;
+    + `repeated to at least ${E.target} s, with ${E.gap} ms between notes and ${E.pause} ms between fragments.`;
 
   function labLink(item, set) {
-    const query = new URLSearchParams({ song: item.fragment, treatment: item.treatment });
-    if (item.treatment === 'maximized') { query.set('bias', E.bias); query.set('seed', set.seed); }
-    if (item.treatment === 'attenuated') { query.set('method', E.method); query.set('fm', E.fm * 100); }
+    const used = settingsOf(set);
+    const query = new URLSearchParams({ song: item.fragment, treatment: item.treatment, gap: used.gap, pause: used.pause, target: used.target });
+    if (item.treatment === 'maximized') { query.set('bias', used.bias); query.set('seed', set.seed); }
+    if (item.treatment === 'attenuated') { query.set('method', used.method); query.set('fm', used.fm * 100); }
     return `${labPage}#${query}`;
   }
 
@@ -810,9 +816,9 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   $('export').addEventListener('click', () => {
     const quote = (value) => `"${String(value).replace(/"/g, '""')}"`;
     const columns = ['set', 'generated', ...RECIPE.flatMap((item) => [`${item.treatment}_${item.form}`, `${item.treatment}_${item.form}_seconds`]),
-      'maximized_bias', 'maximized_seed', 'attenuated_modulation_kept'];
+      'maximized_bias', 'maximized_seed', 'attenuated_modulation_kept', 'note_gap_ms', 'fragment_gap_ms', 'target_seconds'];
     const lines = sets.map((set) => [set.number, set.created, ...set.items.flatMap((item) => [stem(item.fragment), item.seconds.toFixed(3)]),
-      E.bias, set.seed, E.fm]);
+      settingsOf(set).bias, set.seed, settingsOf(set).fm, settingsOf(set).gap, settingsOf(set).pause, settingsOf(set).target]);
     save('stimulus_sets.csv', new Blob([[columns, ...lines].map((line) => line.map(quote).join(',')).join('\n') + '\n'], { type: 'text/csv' }));
   });
 
