@@ -37,26 +37,41 @@ stimuli of a form never share a fragment.
   `<place>_<treatment>_<FORM>_<fragment>.wav`, for example
   `2_maximized_HIGH_ZB_0025_211109_015.WAV_24.wav`, so they sort in playing order.
 
-Generating a set only adds it to the list on the page; nothing is downloaded until you
-press Download on that set. One set is shown at a time; the arrows and the menu beside
-"Generated sets" move between them. A set lists its four stimuli one per row, in order,
-with a button to play each one and a small chart of one fragment (notes coloured by
-type). Clicking a stimulus's name opens it in the lab above. Any set can be deleted.
+### Using the sets
 
-Next to each stimulus are the fields to fill in after playback: time spent within 1 m
-(minutes and seconds), the largest number of birds seen within 1 m, 2 m and 5 m, and
-comments. They are saved as you type. "Download data" saves them as
-`playback_data_<date>.csv`, one row per playback for every set: set, order, file name,
-treatment, form, time spent within 1 m (as m:ss and in seconds), the three counts and
-the comments, followed by how the stimulus was made.
+- **New set** draws four stimuli and adds the set to the row of numbered buttons. Nothing
+  is downloaded at that point.
+- **The numbered buttons and the arrows** move between sets; one set is on screen at a
+  time. A dot on a button shows that the set has notes (orange: some playbacks, green:
+  all four).
+- **Download sounds**, on a set, saves its four WAV files as `setNN.zip`. Each set keeps
+  the settings it was generated with, so its sounds are identical every time, even after
+  the defaults change.
+- **Each row is one playback**, in playing order, with a button to hear the stimulus and
+  a small chart of one fragment (notes coloured by type). Clicking its name opens it in
+  the lab above.
+- **Next to each playback are the fields to fill in afterwards:** time spent within 1 m
+  (minutes and seconds), the largest number of birds seen within 1 m, 2 m and 5 m, and
+  comments. They are saved as you type.
+- **Delete this set**, at the bottom of a set, removes it and its notes. A new set takes
+  the lowest free number, so the numbers of deleted sets are used again; the creation
+  time and seed in `setNN.json` tell two sets with the same number apart.
 
-Each set keeps the settings it was generated with, so downloading it again gives the
-identical files even after the defaults change. A new set takes the lowest free number,
-so the numbers of deleted sets are used again; the creation time and seed in
-`setNN.json` tell two sets with the same number apart.
+### Your data
 
-**The list and everything typed into it are stored in the browser of the computer you
-use, not online and not shared.** Download the data regularly to keep a copy.
+Everything is stored in the browser of the computer you use: not online, and not shared
+with anyone.
+
+- **Download data** saves `playback_data_<date>.csv`, one row per playback for every
+  set: set, order, file name, treatment, form, time spent within 1 m (as m:ss and in
+  seconds), the three counts and the comments, followed by how the stimulus was made.
+  The page tells you whether anything changed since the last download.
+- **Import data** reads such a file back, on any computer. Sets that are already there
+  get the notes of the file; other sets are added, under a new number if theirs is
+  taken. A file re-saved from a spreadsheet with semicolons is accepted too.
+- **Clear all** removes every set and its notes from the browser.
+
+Download the data regularly: it is the only copy outside the browser.
 
 ## Treatments
 
