@@ -36,8 +36,8 @@ within its form, and the two stimuli of a form never share a fragment.
 
 Generating a set only adds it to the list on the page; nothing is downloaded until you
 press Download on that set. Each set shows a small chart of its four stimuli (one
-fragment each, notes coloured by type), and clicking a stimulus opens it in the lab
-above. Any set can be deleted from the list.
+fragment each, notes coloured by type) with a button to play it, and clicking a
+stimulus's name opens it in the lab above. Any set can be deleted from the list.
 
 Each set keeps the settings it was generated with, so downloading it again gives the
 identical files even after the defaults change. A new set takes the lowest free number,
@@ -53,9 +53,12 @@ computer you use, not shared.
   by how many times more the form uses it than the other form. The least specific notes
   are replaced first, by notes of the same form borrowed from other fragments, and at
   high bias almost everything becomes the form's most specific type.
-- **Attenuated**: same notes, with less frequency modulation inside each note, either by
-  smoothing and scaling the contour or by rebuilding it from its first principal
-  components. Optionally every note is moved to the fragment's average pitch.
+- **Attenuated**: the fine structure of the fragment is reduced, in one of three ways.
+  *Smooth + scale* smooths each note's contour and shrinks its frequency modulation
+  (down to a flat tone at 0%). *PCs* rebuilds each note from its first principal
+  components. *Whistle* keeps the notes as recorded but replaces every silence between
+  two notes by a straight pitch glide, so each fragment becomes one continuous whistle.
+  With any of them, every note can also be moved to the fragment's average pitch.
 
 ## Data
 
