@@ -45,8 +45,10 @@ type). Clicking a stimulus's name opens it in the lab above. Any set can be dele
 
 Next to each stimulus are the fields to fill in after playback: time spent within 1 m
 (minutes and seconds), the largest number of birds seen within 1 m, 2 m and 5 m, and
-comments. They are saved as you type. "Export table" writes one line per stimulus with
-what was played and what was noted.
+comments. They are saved as you type. "Download data" saves them as
+`playback_data_<date>.csv`, one row per playback for every set: set, order, file name,
+treatment, form, time spent within 1 m (as m:ss and in seconds), the three counts and
+the comments, followed by how the stimulus was made.
 
 Each set keeps the settings it was generated with, so downloading it again gives the
 identical files even after the defaults change. A new set takes the lowest free number,
@@ -54,7 +56,7 @@ so the numbers of deleted sets are used again; the creation time and seed in
 `setNN.json` tell two sets with the same number apart.
 
 **The list and everything typed into it are stored in the browser of the computer you
-use, not online and not shared.** Export the table regularly to keep a copy.
+use, not online and not shared.** Download the data regularly to keep a copy.
 
 ## Treatments
 
