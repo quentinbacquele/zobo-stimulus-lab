@@ -40,8 +40,9 @@ fragment each, notes coloured by type), and clicking a stimulus opens it in the 
 above. Any set can be deleted from the list.
 
 Each set keeps the settings it was generated with, so downloading it again gives the
-identical files even after the defaults change, and a deleted set's number is not
-reused. The list can be exported as a CSV file. It is stored in the browser of the
+identical files even after the defaults change. A new set takes the lowest free number,
+so the numbers of deleted sets are used again; the creation time and seed in
+`setNN.json` tell two sets with the same number apart. The list can be exported as a CSV file. It is stored in the browser of the
 computer you use, not shared.
 
 ## Treatments
