@@ -36,8 +36,8 @@ within its form, and the two stimuli of a form never share a fragment.
 
 Generating a set only adds it to the list on the page; nothing is downloaded until you
 press Download on that set. Each set shows a small chart of its four stimuli (one
-fragment each, notes coloured by type, over the recorded fragment in grey), and clicking
-a stimulus opens it in the lab above. Any set can be deleted from the list.
+fragment each, notes coloured by type), and clicking a stimulus opens it in the lab
+above. Any set can be deleted from the list.
 
 Each set keeps the settings it was generated with, so downloading it again gives the
 identical files even after the defaults change, and a deleted set's number is not
