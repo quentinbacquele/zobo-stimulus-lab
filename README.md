@@ -12,8 +12,10 @@ The page has two parts:
 - **Stimulus sets** (bottom): one click draws a ready-to-use set of four stimuli for the
   playback experiment, which you then download as a zip.
 
-Everything runs in your browser and nothing is uploaded. To work offline, download
-`index.html` and open it.
+Everything runs in your browser and nothing is uploaded. To work without internet,
+download `index.html` beforehand and open it from your device: it shows "Offline copy"
+beside its title. That copy keeps its own list of sets, separate from the online page;
+Download data and Import data move sets between the two.
 
 ## A set
 
