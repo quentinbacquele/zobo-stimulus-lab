@@ -713,22 +713,12 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   }
 
   // The four WAV files and a manifest, in one folder named after the set.
-  // What the list shows about each stimulus.
-  const describe = (item, song, out) =>
-    Object.assign(item, { bird: song.bird, notes: out.notes.length, seconds: out.duration, replaced: out.replaced });
-  function measure(set) {
-    for (const item of set.items) {
-      const { song, out } = render(item, set);
-      describe(item, song, out);
-    }
-  }
-
   function build(set) {
     const files = [], described = [], used = settingsOf(set);
     for (const item of set.items) {
       const { song, out } = render(item, set);
       files.push({ name: `${folder(set)}/${fileName(item)}`, bytes: new Uint8Array(Lab.encodeWav(out.audio, out.sampleRate)) });
-      describe(item, song, out);
+      Object.assign(item, { bird: song.bird, notes: out.notes.length, seconds: out.duration, replaced: out.replaced });
       described.push({
         file: fileName(item), treatment: item.treatment, form: item.form, song_fragment: item.fragment, bird: song.bird,
         n_notes: out.notes.length, n_fragments: out.repeats, duration_s: out.duration,
@@ -781,7 +771,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     table.replaceChildren(head);
     if (!sets.length) {
       const row = node('tr');
-      row.append(Object.assign(node('td', 'none', 'No set yet. Every set you generate is listed here, so you can see what it contains and download it.'), { colSpan: head.children.length }));
+      row.append(Object.assign(node('td', 'none', 'No set yet. Every set you generate is listed here, so you can see what it contains and download it again.'), { colSpan: head.children.length }));
       table.append(row);
     }
     for (const set of [...sets].reverse()) {
@@ -837,12 +827,13 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     button.textContent = 'Generating…';
     try {
       const set = drawSet();
-      await later(() => measure(set));
+      const archive = await later(() => build(set));
       highest = set.number;
       sets.push(set);
       remember();
       drawTable();
-      $('status').textContent = `Set ${set.number} added to the list`;
+      save(`${folder(set)}.zip`, archive);
+      $('status').textContent = `Set ${set.number} downloaded as ${folder(set)}.zip`;
     } catch (error) {
       $('status').textContent = `Could not generate the set: ${error.message}`;
     }
