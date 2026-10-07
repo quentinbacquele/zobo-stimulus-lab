@@ -62,12 +62,15 @@ main { display: grid; gap: 20px; min-width: 0; }
 /* The record */
 .table-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
-th, td { padding: 10px 18px 10px 0; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top; white-space: nowrap; }
+th, td { padding: 10px 14px 10px 0; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top; white-space: nowrap; }
 th { padding-block: 0 8px; border-color: var(--axis); color: var(--ink-2); font-size: 12.5px; font-weight: 650; }
 th:last-child, td:last-child { padding-right: 0; text-align: right; }
+td.row-actions > *, .sure > * { margin-left: 12px; vertical-align: middle; }
+td.row-actions .btn { height: 34px; padding: 0 12px; font-size: 13.5px; }
+td.row-actions { line-height: 34px; }
 td.set { font-size: 15px; font-weight: 700; }
 td.when { color: var(--ink-2); }
-td a { color: var(--ink); font-family: var(--mono); font-size: 12.5px; font-weight: 600; text-decoration: none; }
+td a { color: var(--ink); font-family: var(--mono); font-size: 12px; font-weight: 600; text-decoration: none; }
 td a:hover { text-decoration: underline; }
 td small { display: block; color: var(--ink-2); font-size: 12.5px; }
 td.none { padding-block: 22px; color: var(--ink-2); text-align: left; white-space: normal; }
@@ -640,8 +643,14 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   const STORE = 'stimulus-sets';
   let sets = [];
   try { sets = JSON.parse(localStorage.getItem(STORE)) || []; } catch (error) { /* storage unavailable */ }
+  let highest = 0;   // largest set number given so far; a deleted set's number is not reused
+  try { highest = Number(localStorage.getItem(`${STORE}-highest`)) || 0; } catch (error) { /* storage unavailable */ }
+  highest = Math.max(highest, ...sets.map((set) => set.number));
   const remember = () => {
-    try { localStorage.setItem(STORE, JSON.stringify(sets)); } catch (error) { /* storage unavailable */ }
+    try {
+      localStorage.setItem(STORE, JSON.stringify(sets));
+      localStorage.setItem(`${STORE}-highest`, highest);
+    } catch (error) { /* storage unavailable */ }
   };
 
   // Two stimuli of the same form never share a fragment within a set.
@@ -653,7 +662,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
       taken.add(index);
       return { treatment, form, fragment: D.songs[index].name };
     });
-    return { number: Math.max(0, ...sets.map((set) => set.number)) + 1, created: new Date().toISOString(), seed: random(1e9),
+    return { number: highest + 1, created: new Date().toISOString(), seed: random(1e9),
       settings: snapshot(), items };
   }
 
@@ -704,12 +713,22 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   }
 
   // The four WAV files and a manifest, in one folder named after the set.
+  // What the list shows about each stimulus.
+  const describe = (item, song, out) =>
+    Object.assign(item, { bird: song.bird, notes: out.notes.length, seconds: out.duration, replaced: out.replaced });
+  function measure(set) {
+    for (const item of set.items) {
+      const { song, out } = render(item, set);
+      describe(item, song, out);
+    }
+  }
+
   function build(set) {
     const files = [], described = [], used = settingsOf(set);
     for (const item of set.items) {
       const { song, out } = render(item, set);
       files.push({ name: `${folder(set)}/${fileName(item)}`, bytes: new Uint8Array(Lab.encodeWav(out.audio, out.sampleRate)) });
-      Object.assign(item, { bird: song.bird, notes: out.notes.length, seconds: out.duration, replaced: out.replaced });
+      describe(item, song, out);
       described.push({
         file: fileName(item), treatment: item.treatment, form: item.form, song_fragment: item.fragment, bird: song.bird,
         n_notes: out.notes.length, n_fragments: out.repeats, duration_s: out.duration,
@@ -762,13 +781,13 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     table.replaceChildren(head);
     if (!sets.length) {
       const row = node('tr');
-      row.append(Object.assign(node('td', 'none', 'No set yet. Every set you generate is listed here, so you can see what it contains and download it again.'), { colSpan: head.children.length }));
+      row.append(Object.assign(node('td', 'none', 'No set yet. Every set you generate is listed here, so you can see what it contains and download it.'), { colSpan: head.children.length }));
       table.append(row);
     }
     for (const set of [...sets].reverse()) {
       const row = node('tr');
       row.append(node('td', 'set', `Set ${set.number}`));
-      row.append(node('td', 'when', new Date(set.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })));
+      row.append(node('td', 'when', new Date(set.created).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })));
       for (const item of set.items) {
         const cell = node('td');
         cell.append(Object.assign(node('a', '', stem(item.fragment)), { href: labLink(item, set), title: 'Open in the stimulus lab' }));
@@ -779,15 +798,33 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
       const again = Object.assign(node('button', 'btn', 'Download'), { type: 'button' });
       again.addEventListener('click', async () => {
         again.disabled = true;
+        again.textContent = 'Preparing…';
         try {
           save(`${folder(set)}.zip`, await later(() => build(set)));
+          $('status').textContent = `Set ${set.number} downloaded as ${folder(set)}.zip`;
         } catch (error) {
           $('status').textContent = `Could not rebuild set ${set.number}: ${error.message}`;
         }
         again.disabled = false;
+        again.textContent = 'Download';
       });
-      const last = node('td');
-      last.append(again);
+      const remove = Object.assign(node('button', 'quiet', 'Delete'), { type: 'button', title: `Remove set ${set.number} from this list` });
+      const sure = node('span', 'sure');
+      const yes = Object.assign(node('button', 'quiet', 'Yes'), { type: 'button' });
+      const no = Object.assign(node('button', 'quiet', 'No'), { type: 'button' });
+      sure.append(node('span', 'quiet', `Delete set ${set.number}?`), yes, no);
+      sure.hidden = true;
+      const ask = (on) => { sure.hidden = !on; again.hidden = remove.hidden = on; };
+      remove.addEventListener('click', () => ask(true));
+      no.addEventListener('click', () => ask(false));
+      yes.addEventListener('click', () => {
+        sets = sets.filter((other) => other !== set);
+        remember();
+        drawTable();
+        $('status').textContent = `Set ${set.number} deleted`;
+      });
+      const last = node('td', 'row-actions');
+      last.append(again, remove, sure);
       row.append(last);
       table.append(row);
     }
@@ -800,12 +837,12 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
     button.textContent = 'Generating…';
     try {
       const set = drawSet();
-      const archive = await later(() => build(set));
+      await later(() => measure(set));
+      highest = set.number;
       sets.push(set);
       remember();
       drawTable();
-      save(`${folder(set)}.zip`, archive);
-      $('status').textContent = `Set ${set.number} downloaded as ${folder(set)}.zip`;
+      $('status').textContent = `Set ${set.number} added to the list`;
     } catch (error) {
       $('status').textContent = `Could not generate the set: ${error.message}`;
     }
@@ -825,7 +862,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   const asking = (on) => { $('confirm').hidden = !on; $('clear').hidden = on; };
   $('clear').addEventListener('click', () => asking(true));
   $('clear-no').addEventListener('click', () => asking(false));
-  $('clear-yes').addEventListener('click', () => { sets = []; remember(); asking(false); drawTable(); $('status').textContent = ''; });
+  $('clear-yes').addEventListener('click', () => { sets = []; highest = 0; remember(); asking(false); drawTable(); $('status').textContent = ''; });
 
   const isDark = () => document.documentElement.dataset.theme === 'dark';
   const setTheme = (dark) => {
