@@ -1592,7 +1592,7 @@ if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded
   }
   function play(song, button, marksNow) {
     stop();
-    player.context = player.context || new AudioContext();
+    player.context = player.context || new AudioContext({ sampleRate: Lab.SAMPLE_RATE });
     player.context.resume();
     const buffer = player.context.createBuffer(1, song.audio.length, song.sampleRate);
     buffer.getChannelData(0).set(song.audio);
