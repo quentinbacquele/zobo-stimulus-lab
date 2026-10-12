@@ -41,6 +41,14 @@ stimuli of a form never share a fragment.
 
 ### Using the sets
 
+- **Generate 24 Highlands sets** adds the symmetric experiment: attenuated HIGH,
+  maximized LBHB (bias 2.5), original HIGH and original LBHB. It uses all 24 possible
+  playback orders once, shuffled randomly across the new sets. Each stimulus appears
+  exactly six times in each of the four positions. Fragments are drawn independently
+  for each set, with different fragments for the two stimuli of a form. Existing sets
+  and observations are kept, and the new sets take the lowest free numbers. The same
+  experiment settings, sound downloads and CSV export/import apply. Editing the orders
+  afterwards changes the balance of the batch.
 - **New set** draws four stimuli and adds the set to the row of numbered buttons. Nothing
   is downloaded at that point.
 - **The numbered buttons and the arrows** move between sets; one set is on screen at a
@@ -58,6 +66,8 @@ stimuli of a form never share a fragment.
 - **Each row is one playback**, in playing order, with a button to hear the stimulus and
   a small chart of one fragment (notes coloured by type). Clicking its name opens it in
   the lab above.
+- **Edit order** moves a stimulus, including its observations, to another position.
+  Download sounds again after changing an order so the file prefixes match it.
 - **Next to each playback are the fields to fill in afterwards:** time spent within 1 m
   (minutes and seconds), the largest number of birds seen within 1 m, 2 m and 5 m, and
   comments. They are saved as you type.
